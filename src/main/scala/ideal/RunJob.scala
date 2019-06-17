@@ -8,14 +8,14 @@ import org.apache.spark.sql.SparkSession
 object RunJob {
   case class model(a:String,b:String,c:String,d:String,e:String,f:String)
   def main(args: Array[String]): Unit = {
-    val logFile = "wx"
-    val file = RunJob.getClass.getClassLoader.getResource(logFile).getPath
+    val logFile = "D:\\GITRepo\\event\\src\\resources\\wx"
+    //val file = RunJob.getClass.getClassLoader.getResource(logFile).getPath
     val spark = SparkSession.builder().
       appName("xsql").
       master("local[1]").
-      config("spark.sql.warehouse.dir", "C:/Users/SongHyeKyo/ideaProjects/event/spark-warehouse").
+      config("spark.sql.warehouse.dir", "D:/GITRepo/event/spark-warehouse").
       getOrCreate()
-    val textRdd = spark.sparkContext.textFile(file).
+    val textRdd = spark.sparkContext.textFile(logFile).
       map({
         line =>
           val arr = line.split("\t")
@@ -25,13 +25,7 @@ object RunJob {
     val wechat = spark.createDataFrame(textRdd)
     wechat.createOrReplaceTempView("wechat")
     val df = spark.sql("select * from wechat")
-    df.filter({ row =>
-      var flag=false
-      if(row.get(0)=="2018082713"){
-        flag=true
-      }
-      flag
-    })
+    //df.filter($"a"="2018082713")
     df.show()
   }
 }

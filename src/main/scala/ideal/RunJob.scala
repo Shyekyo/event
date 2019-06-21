@@ -1,6 +1,8 @@
 package ideal
 
-import org.apache.spark.sql.SparkSession
+import java.util.Properties
+
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 /**
   * Created by zhangxiaofan on 2019/6/17.
@@ -25,7 +27,20 @@ object RunJob {
     val wechat = spark.createDataFrame(textRdd)
     wechat.createOrReplaceTempView("wechat")
     val df = spark.sql("select * from wechat")
-    //df.filter($"a"="2018082713")
+    //df.filter("a=2018082713")
     df.show()
+  }
+
+  def WriteDataIntoTable(df: DataFrame, TableName: String): Unit = {
+    val props = new Properties()
+    props.put("user", "  ")
+    props.put("password", "  ")
+    props.put("driver", "  ")
+    df.write.mode("append")
+      .jdbc(
+        "url",
+        TableName,
+        props
+      )
   }
 }

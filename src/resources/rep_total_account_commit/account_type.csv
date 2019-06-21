@@ -1,79 +1,78 @@
-"ACCOUNT_TYPE_ID","ACCOUNT_TYPE_NAME","ACCOUNT_REF_PREFIX","ACCT_TYPE"
-"76","ctog»°Òô¹ú¼Ê³ö·Ãµ÷Õû","C76","CTOG"
-"77","ctog¶ÌÐÅ¹ú¼Ê³ö·Ãµ÷Õû","C77","CTOG"
-"78","ctogÊý¾Ý¹ú¼Ê³ö·Ãµ÷Õû","C78","CTOG"
-"79","LTEÂþÈëµ÷Õû","C79","LTE"
-"80","LTEÂþ³öµ÷Õû","C80","LTE"
-"81","×ÔÖ÷ÂþÓÎ²âÊÔ¿¨³ö·Ãµ÷Õû","C81","ROAMING"
-"82","ctog»°Òô°ÄÃÅ³ö·Ãµ÷Õû","C82","CTOG"
-"83","ctog¶ÌÐÅ°ÄÃÅ³ö·Ãµ÷Õû","C83","CTOG"
-"84","ctogÊý¾Ý°ÄÃÅ³ö·Ãµ÷Õû","C84","CTOG"
-"51","¹ú¼ÊÒÆ¶¯»°Òô¶Ô·½À´Ïò","PIV","ROAMING"
-"52","¹ú¼ÊÒÆ¶¯¶ÌÐÅ¶Ô·½À´Ïò","PIR","ROAMING"
-"53","¹ú¼Êcdma1x¶Ô·½À´Ïò","PID","ROAMING"
-"40","¹ú¼ÊÍøÔªÀ´ÏòÒ»´ÎÐÔ°²×°·ÑÕÊÄ¿Ã÷Ï¸","I","WYCZ"
-"35","¹ú¼ÊÍøÔªÈ¥ÏòÕÊÄ¿Ã÷Ï¸","G","WYCZ"
-"36","¹ú¼ÊÍøÔªÀ´ÏòÕÊÄ¿Ã÷Ï¸","C","WYCZ"
-"37","¹ú¼ÊÍøÔª¶Ô·½À´ÏòÕÊÄ¿Ã÷Ï¸","P","WYCZ"
-"38","¹ú¼ÊÍøÔªÈ¥ÏòÒ»´ÎÐÔ°²×°·ÑÕÊÄ¿Ã÷Ï¸","I","WYCZ"
-"39","¹ú¼ÊÍøÔªÖÍÄÉ½ðÕÊÄ¿Ã÷Ï¸","L","WYCZ"
-"1","¹ú¼ÊÈ¥ÏòÔÂÕÊ","CMS","TELEPHONE"
-"2","¹ú¼ÊÈ¥Ïò³ÐÅµÕÊ","CDS","COMMITMENT ADJUST"
-"3","¹ú¼ÊÈ¥Ïò³ÐÅµ³åÏúÕÊ","CNG","COMMITMENT ADJUST"
-"4","¹ú¼ÊÈ¥ÏòHUBBINGÔÂÕÊ","CGH","SPECIAL TRANSIT"
-"5","¹ú¼Ê×ªÀ´HUBBINGÔÂÕÊ","CTH","SPECIAL TRANSIT"
-"6","¹ú¼ÊÀ´ÏòÔÂÕÊ","CCS","TELEPHONE"
-"7","¹ú¼ÊÀ´Ïò³ÐÅµÔÂÕÊ","CDC","COMMITMENT ADJUST"
-"8","¹ú¼ÊÀ´Ïò³ÐÅµ³åÏúÔÂÕÊ","CNC","COMMITMENT ADJUST"
-"9","¹ú¼Ê¶Ô·½È¥ÏòHUBBINGÔÂÕÊ","PGH","SPECIAL TRANSIT"
-"10","¹ú¼Ê¶Ô·½×ªÀ´HUBBINGÔÂÕÊ","PTH","SPECIAL TRANSIT"
-"11","¹ú¼Ê¶Ô·½À´ÏòÔÂÕÊ","PCS","TELEPHONE"
-"12","¹ú¼Ê¶Ô·½À´Ïò³ÐÅµÔÂÕÊ","PDC",""
-"15","¹úÄÚÒÆ¶¯À´·ÃÔÂÕÊ","DIS","ROAMING"
-"16","¹úÄÚÒÆ¶¯³ö·ÃÔÂÕÊ","DOS","ROAMING"
-"17","¹ú¼Ê·Ö×é½»»»È¥ÏòÔÂÕÊ","CMS","PKSW"
-"18","¹ú¼Ê·Ö×é½»»»À´ÏòÔÂÕÊ","CCS","PKSW"
-"19","¹ú¼Ê·Ö×é½»»»¶Ô·½À´ÏòÔÂÕÊ","PCS","PKSW"
-"20","¹ú¼ÊÓÃ»§µç±¨È¥ÏòÔÂÕÊ","CMS","TELX"
-"21","¹ú¼ÊÓÃ»§µç±¨À´ÏòÔÂÕÊ","CCS","TELX"
-"22","¹ú¼ÊÓÃ»§µç±¨¶Ô·½À´ÏòÔÂÕÊ","PCS","TELX"
-"23","¹ú¼Ê¹«ÖÚµç±¨È¥ÏòÔÂÕÊ","CMS","TELEGRAM"
-"24","¹ú¼Ê¹«ÖÚµç±¨À´ÏòÔÂÕÊ","CCS","TELEGRAM"
-"25","¹ú¼Ê¹«ÖÚµç±¨¶Ô·½À´ÏòÔÂÕÊ","PCS","TELEGRAM"
-"26","¹ú¼Ê´æ´¢×ª·¢È¥ÏòÔÂÕÊ","CMS","SFFX"
-"27","¹ú¼Ê´æ´¢×ª·¢À´ÏòÔÂÕÊ","CCS","SFFX"
-"28","¹ú¼Ê´æ´¢×ª·¢¶Ô·½À´ÏòÔÂÕÊ","PCS","SFFX"
-"29","¹ú¼Ê×ªÀ´Ïò³ÐÅµÔÂÕÊ","CDT","COMMITMENT ADJUST"
-"30","¹ú¼Ê×ªÀ´Ïò³ÐÅµ³åÏúÔÂÕÊ","CNC","COMMITMENT ADJUST"
-"41","¹ú¼ÊÒÆ¶¯»°ÒôÀ´·Ã","IV ","ROAMING"
-"42","¹ú¼ÊÒÆ¶¯»°Òô³ö·Ã","IV ","ROAMING"
-"43","¹ú¼Êcdma1xÀ´·Ã","ID ","ROAMING"
-"44","¹ú¼Êcdma1x³ö·Ã","ID ","ROAMING"
-"45","¹ú¼ÊÂþÓÎ¶ÌÐÅÀ´·Ã","IS ","ROAMING"
-"46","¹ú¼ÊÂþÓÎ¶ÌÐÅ³ö·Ã","IS ","ROAMING"
-"47","ctog»°Òô¹ú¼Ê³ö·Ã","CGV","ROAMING"
-"48","ctog 1x¹ú¼Ê³ö·Ã","CGD","ROAMING"
-"49","ctog¶ÌÐÅ¹ú¼Ê³ö·Ã","CGM","ROAMING"
-"50","SyniverseÂþÓÎ·þÎñ·Ñ","ISS","ROAMING"
-"54","ctog·þÎñ·Ñ","CGS","ROAMING"
-"68","È¥ÏòÊÜ¸¶ÔÂ×â","CGR","ROAMING"
-"69","À´ÏòÊÜ¸¶ÔÂ×â","CCR","ROAMING"
-"65","MVNOÊÕÈë","M","mvno"
-"66","MVNOÖ§³ö","M","mvno"
-"61","ctog»°Òô°ÄÃÅ³ö·Ã","CGV","ROAMING"
-"89","¹ú¼Ê¶ÌÐÅÀ´Ïò","M89","SMS"
-"90","¹ú¼Ê¶ÌÐÅÀ´Ïòµ÷Õû","M90","SMS"
-"91","¹ú¼Ê¶ÌÐÅÈ¥Ïò","M91","SMS"
-"92","¹ú¼Ê¶ÌÐÅÈ¥Ïòµ÷Õû","M92","SMS"
-"72","¹ú¼Ê¶Ô·½È¥Ïò","PGM","TELEPHONE"
-"73","¹ú¼Ê¶Ô·½È¥Ïò³ÐÅµ","PDG","COMMITMENT ADJUST"
-"74","¹ú¼Ê¶Ô·½È¥Ïòµ÷Õû","PGM","TELEPHONE"
-"75","¹ú¼Ê¶Ô·½È¥Ïò³ÐÅµµ÷Õû","PDG","COMMITMENT ADJUST"
-"85","MVNOÊÕÈë¶Ô·½","M85","MVNO"
-"86","MVNOÖ§³ö¶Ô·½","M86","MVNO"
-"87","MVNOÊÕÈë¶Ô·½µ÷Õû","M87","MVNO"
-"88","MVNOÖ§³ö¶Ô·½µ÷Õû","M88","MVNO"
-"55","LTEÂþÈë","MCT","LTE"
-"56","LTEÂþ³ö","M","LTE"
-"57","LTE¶Ô·½ÂþÈë","PCT","LTE PEER"
-"58","LTE¶Ô·½Âþ³ö","PCT","LTE PEER"
+76,ctogè¯éŸ³å›½é™…å‡ºè®¿è°ƒæ•´,C76,CTOG
+77,ctogçŸ­ä¿¡å›½é™…å‡ºè®¿è°ƒæ•´,C77,CTOG
+78,ctogæ•°æ®å›½é™…å‡ºè®¿è°ƒæ•´,C78,CTOG
+79,LTEæ¼«å…¥è°ƒæ•´,C79,LTE
+80,LTEæ¼«å‡ºè°ƒæ•´,C80,LTE
+81,è‡ªä¸»æ¼«æ¸¸æµ‹è¯•å¡å‡ºè®¿è°ƒæ•´,C81,ROAMING
+82,ctogè¯éŸ³æ¾³é—¨å‡ºè®¿è°ƒæ•´,C82,CTOG
+83,ctogçŸ­ä¿¡æ¾³é—¨å‡ºè®¿è°ƒæ•´,C83,CTOG
+84,ctogæ•°æ®æ¾³é—¨å‡ºè®¿è°ƒæ•´,C84,CTOG
+51,å›½é™…ç§»åŠ¨è¯éŸ³å¯¹æ–¹æ¥å‘,PIV,ROAMING
+52,å›½é™…ç§»åŠ¨çŸ­ä¿¡å¯¹æ–¹æ¥å‘,PIR,ROAMING
+53,å›½é™…cdma1xå¯¹æ–¹æ¥å‘,PID,ROAMING
+40,å›½é™…ç½‘å…ƒæ¥å‘ä¸€æ¬¡æ€§å®‰è£…è´¹å¸ç›®æ˜Žç»†,I,WYCZ
+35,å›½é™…ç½‘å…ƒåŽ»å‘å¸ç›®æ˜Žç»†,G,WYCZ
+36,å›½é™…ç½‘å…ƒæ¥å‘å¸ç›®æ˜Žç»†,C,WYCZ
+37,å›½é™…ç½‘å…ƒå¯¹æ–¹æ¥å‘å¸ç›®æ˜Žç»†,P,WYCZ
+38,å›½é™…ç½‘å…ƒåŽ»å‘ä¸€æ¬¡æ€§å®‰è£…è´¹å¸ç›®æ˜Žç»†,I,WYCZ
+39,å›½é™…ç½‘å…ƒæ»žçº³é‡‘å¸ç›®æ˜Žç»†,L,WYCZ
+1,å›½é™…åŽ»å‘æœˆå¸,CMS,TELEPHONE
+2,å›½é™…åŽ»å‘æ‰¿è¯ºå¸,CDS,COMMITMENT ADJUST
+3,å›½é™…åŽ»å‘æ‰¿è¯ºå†²é”€å¸,CNG,COMMITMENT ADJUST
+4,å›½é™…åŽ»å‘HUBBINGæœˆå¸,CGH,SPECIAL TRANSIT
+5,å›½é™…è½¬æ¥HUBBINGæœˆå¸,CTH,SPECIAL TRANSIT
+6,å›½é™…æ¥å‘æœˆå¸,CCS,TELEPHONE
+7,å›½é™…æ¥å‘æ‰¿è¯ºæœˆå¸,CDC,COMMITMENT ADJUST
+8,å›½é™…æ¥å‘æ‰¿è¯ºå†²é”€æœˆå¸,CNC,COMMITMENT ADJUST
+9,å›½é™…å¯¹æ–¹åŽ»å‘HUBBINGæœˆå¸,PGH,SPECIAL TRANSIT
+10,å›½é™…å¯¹æ–¹è½¬æ¥HUBBINGæœˆå¸,PTH,SPECIAL TRANSIT
+11,å›½é™…å¯¹æ–¹æ¥å‘æœˆå¸,PCS,TELEPHONE
+12,å›½é™…å¯¹æ–¹æ¥å‘æ‰¿è¯ºæœˆå¸,PDC,
+15,å›½å†…ç§»åŠ¨æ¥è®¿æœˆå¸,DIS,ROAMING
+16,å›½å†…ç§»åŠ¨å‡ºè®¿æœˆå¸,DOS,ROAMING
+17,å›½é™…åˆ†ç»„äº¤æ¢åŽ»å‘æœˆå¸,CMS,PKSW
+18,å›½é™…åˆ†ç»„äº¤æ¢æ¥å‘æœˆå¸,CCS,PKSW
+19,å›½é™…åˆ†ç»„äº¤æ¢å¯¹æ–¹æ¥å‘æœˆå¸,PCS,PKSW
+20,å›½é™…ç”¨æˆ·ç”µæŠ¥åŽ»å‘æœˆå¸,CMS,TELX
+21,å›½é™…ç”¨æˆ·ç”µæŠ¥æ¥å‘æœˆå¸,CCS,TELX
+22,å›½é™…ç”¨æˆ·ç”µæŠ¥å¯¹æ–¹æ¥å‘æœˆå¸,PCS,TELX
+23,å›½é™…å…¬ä¼—ç”µæŠ¥åŽ»å‘æœˆå¸,CMS,TELEGRAM
+24,å›½é™…å…¬ä¼—ç”µæŠ¥æ¥å‘æœˆå¸,CCS,TELEGRAM
+25,å›½é™…å…¬ä¼—ç”µæŠ¥å¯¹æ–¹æ¥å‘æœˆå¸,PCS,TELEGRAM
+26,å›½é™…å­˜å‚¨è½¬å‘åŽ»å‘æœˆå¸,CMS,SFFX
+27,å›½é™…å­˜å‚¨è½¬å‘æ¥å‘æœˆå¸,CCS,SFFX
+28,å›½é™…å­˜å‚¨è½¬å‘å¯¹æ–¹æ¥å‘æœˆå¸,PCS,SFFX
+29,å›½é™…è½¬æ¥å‘æ‰¿è¯ºæœˆå¸,CDT,COMMITMENT ADJUST
+30,å›½é™…è½¬æ¥å‘æ‰¿è¯ºå†²é”€æœˆå¸,CNC,COMMITMENT ADJUST
+41,å›½é™…ç§»åŠ¨è¯éŸ³æ¥è®¿,IV ,ROAMING
+42,å›½é™…ç§»åŠ¨è¯éŸ³å‡ºè®¿,IV ,ROAMING
+43,å›½é™…cdma1xæ¥è®¿,ID ,ROAMING
+44,å›½é™…cdma1xå‡ºè®¿,ID ,ROAMING
+45,å›½é™…æ¼«æ¸¸çŸ­ä¿¡æ¥è®¿,IS ,ROAMING
+46,å›½é™…æ¼«æ¸¸çŸ­ä¿¡å‡ºè®¿,IS ,ROAMING
+47,ctogè¯éŸ³å›½é™…å‡ºè®¿,CGV,ROAMING
+48,ctog 1xå›½é™…å‡ºè®¿,CGD,ROAMING
+49,ctogçŸ­ä¿¡å›½é™…å‡ºè®¿,CGM,ROAMING
+50,Syniverseæ¼«æ¸¸æœåŠ¡è´¹,ISS,ROAMING
+54,ctogæœåŠ¡è´¹,CGS,ROAMING
+68,åŽ»å‘å—ä»˜æœˆç§Ÿ,CGR,ROAMING
+69,æ¥å‘å—ä»˜æœˆç§Ÿ,CCR,ROAMING
+65,MVNOæ”¶å…¥,M,mvno
+66,MVNOæ”¯å‡º,M,mvno
+61,ctogè¯éŸ³æ¾³é—¨å‡ºè®¿,CGV,ROAMING
+89,å›½é™…çŸ­ä¿¡æ¥å‘,M89,SMS
+90,å›½é™…çŸ­ä¿¡æ¥å‘è°ƒæ•´,M90,SMS
+91,å›½é™…çŸ­ä¿¡åŽ»å‘,M91,SMS
+92,å›½é™…çŸ­ä¿¡åŽ»å‘è°ƒæ•´,M92,SMS
+72,å›½é™…å¯¹æ–¹åŽ»å‘,PGM,TELEPHONE
+73,å›½é™…å¯¹æ–¹åŽ»å‘æ‰¿è¯º,PDG,COMMITMENT ADJUST
+74,å›½é™…å¯¹æ–¹åŽ»å‘è°ƒæ•´,PGM,TELEPHONE
+75,å›½é™…å¯¹æ–¹åŽ»å‘æ‰¿è¯ºè°ƒæ•´,PDG,COMMITMENT ADJUST
+85,MVNOæ”¶å…¥å¯¹æ–¹,M85,MVNO
+86,MVNOæ”¯å‡ºå¯¹æ–¹,M86,MVNO
+87,MVNOæ”¶å…¥å¯¹æ–¹è°ƒæ•´,M87,MVNO
+88,MVNOæ”¯å‡ºå¯¹æ–¹è°ƒæ•´,M88,MVNO
+55,LTEæ¼«å…¥,MCT,LTE
+56,LTEæ¼«å‡º,M,LTE
+57,LTEå¯¹æ–¹æ¼«å…¥,PCT,LTE PEER
+58,LTEå¯¹æ–¹æ¼«å‡º,PCT,LTE PEER

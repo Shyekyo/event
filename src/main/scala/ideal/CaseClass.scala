@@ -3,14 +3,14 @@ package ideal
 /**
   * Created by zhangxiaofan on 2019/6/21.
   */
-class CaseClass {
+object CaseClass extends Serializable{
   case class ACCOUNT_TYPE(ACCOUNT_TYPE_ID:Int,ACCOUNT_TYPE_NAME:String,ACCOUNT_REF_PREFIX:String,ACCT_TYPE:String) extends Serializable
 
   case class ACCT_ITEM(ACCT_ITEM_ID:Int,ITEM_SOURCE_ID:Int,CUST_ID:Int,STATE:Int
-                      ,ACCT_ITEM_TYPE_ID:Int,BILLING_CYCLE_ID:Int,CREATE_DATE:Int,
-                      PAYMENT_METHOD:Int,REF_NO:String,GEN_FLAG:Int,GEN_ID:Int,
+                       ,ACCT_ITEM_TYPE_ID:Int,BILLING_CYCLE_ID:Int,CREATE_DATE:Int,
+                       PAYMENT_METHOD:Int,REF_NO:String,GEN_FLAG:Int,GEN_ID:Int,
                        COMMENTS:String,PAY_TYPE:String,DEP_ABBR:String,FLAG:Int,SETTLE_DATE:Int,
-                      TYPE_ID:Int,BUREAU_ID:Int,APPROVE_FLAG:Int) extends Serializable
+                       TYPE_ID:Int,BUREAU_ID:Int,APPROVE_FLAG:Int) extends Serializable
 
   case class ACCT_ITEM_TYPE(ACCT_ITEM_TYPE_ID:Int,ACCT_ITEM_CLASS_ID:Int,ACCOUNT_TYPE_ID:Int,
                             NAME:String,CHARGE_MARK:Int,TOTAL_MARK:Int,ACCOUNT_ITEM_TYPE_CODE:Int,

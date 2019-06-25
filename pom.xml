@@ -35,7 +35,7 @@
       <version>2.1.2</version>
     </dependency>
     <!-- HDFS Client -->
-    <dependency>
+    <!--<dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
       <version>${hadoop.version}</version>
@@ -52,7 +52,7 @@
       <artifactId>hadoop-yarn-client</artifactId>
       <version>${hadoop.version}</version>
       <scope>compile</scope>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-yarn_2.11</artifactId>
@@ -73,11 +73,11 @@
       <version>${spark.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>com.github.nobodxbodon</groupId>
       <artifactId>zhconverter</artifactId>
       <version>0.0.5</version>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
@@ -100,12 +100,12 @@
       <version>10.2.0.4.0</version>
       <scope>runtime</scope>
     </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>oracle</groupId>-->
-<!--      <artifactId>ojdbc14</artifactId>-->
-<!--      <version>10.2.0.4.0</version>-->
-<!--      &lt;!&ndash;<scope>runtime</scope>&ndash;&gt;-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>oracle</groupId>
+      <artifactId>ojdbc14</artifactId>
+      <version>10.2.0.4.0</version>
+      <!--<scope>runtime</scope>-->
+    </dependency>
   </dependencies>
 
   <build>

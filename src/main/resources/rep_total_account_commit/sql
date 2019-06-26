@@ -1,0 +1,263 @@
+CREATE OR REPLACE PROCEDURE rep_total_account_commit(
+  refNo    IN  VARCHAR2,
+  bureauId IN  NUMBER,
+  retCode  OUT NUMBER,
+  message  OUT VARCHAR2,
+  v_cursor OUT report.c_result
+)
+AS
+
+  /******************************************************************************
+    NAME:         中国电信总帐帐单打印
+    PURPOSE:
+
+    REVISIONS:
+    Ver        Date        Author           Description
+    ---------  ----------  ---------------  ------------------------------------
+    1.0        2008-09-04  wzz              Create
+    2.0        2008-10-29   wzz              Edit
+    3.0        2013-11-26  cbf              Edit       账务主体改造
+  ******************************************************************************/
+  countnum number;
+
+  BEGIN
+
+    retCode := 0; --0为初始值1代表无异常-1代表异常
+    Message := 'no error'; --异常信息
+
+    delete from REP_TOTAL_ACCOUNT;
+
+    insert into REP_TOTAL_ACCOUNT
+      select
+        g.gen_id,
+        g.ref_no,
+        stt.cust_name,
+        ait.acct_item_type_id,
+        ait.name,
+        bc.cycle_begin_date,
+        bc.cycle_end_date,
+        a.amount,
+        a.currency,
+        ait.pay_flag,
+        g.start_date,
+        g.end_date,
+        decode(decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type), 'TELEPHONE', 1,
+               decode(decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type), 'TELX', 2,
+                      decode(decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type), 'TELEGRAM', 3,
+                             decode(decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type),
+                                    'COMMITMENT ADJUST', 5,
+                                    decode(decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type),
+                                           ai.comments, 6, 4)))))         sort_id,
+        decode(sign(instr(ait.name, '调整')), 1, ai.comments, at.acct_type) acct_name,
+        g.acct_date
+      from gen_item g,
+        acct_item_type ait,
+        acct_item ai,
+        amount a, stt_object stt,
+        billing_cycle bc,
+        account_type at
+      where a.account_item_id = ai.acct_item_id
+            and ai.acct_item_type_id = ait.acct_item_type_id
+            and ai.gen_id = g.gen_id
+            and g.cust_id = stt.cust_id
+            and at.account_type_id =
+                decode(ait.account_type_id, 59, 47, 60, 48, 61, 49, 71, 69, 70, 68, ait.account_type_id)
+            and ai.billing_cycle_id = bc.billing_cycle_id
+            and g.bureau_id = ai.bureau_id
+            and g.bureau_id = bureauId
+            and g.ref_no = refNo;
+
+
+    insert into REP_TOTAL_ACCOUNT
+      select
+        null,
+        gen_item.ref_no,
+        min(stt_object.cust_name),
+        acct_item_type.acct_item_type_id,
+        '-1',
+        1,
+        2,
+        sum(amount.amount) / 3.061,
+        'SDR',
+        acct_item_type.pay_flag,
+        null,
+        null,
+        8,
+        '',
+        min(gen_item.acct_date)
+      from gen_item,
+        acct_item_type,
+        acct_item,
+        amount,
+        stt_object
+      where gen_item.gen_id = acct_item.gen_id
+            and acct_item.acct_item_type_id = acct_item_type.acct_item_type_id
+            and acct_item.acct_item_id = amount.account_item_id
+            and gen_item.cust_id = stt_object.cust_id
+            and amount.currency = 'GF'
+            and gen_item.bureau_id = acct_item.bureau_id
+            and gen_item.bureau_id = bureauId
+            and gen_item.ref_no = refNo
+      group by gen_item.ref_no, acct_item_type.pay_flag, acct_item_type.acct_item_type_id;
+
+    --增加(如果应收或者应付没有项，就把另一类的记录的amount置为null，复制之)
+    select count(*)
+    into countnum
+    from REP_TOTAL_ACCOUNT
+    where pay_flag = 'C' and currency != 'USD';
+
+    IF countnum = 0
+    THEN
+
+      insert into REP_TOTAL_ACCOUNT
+        select
+          gen_id,
+          ref_no,
+          cust_name,
+          acct_item_type_id,
+          name,
+          cycle_begin_date,
+          cycle_end_date,
+          null,
+          currency,
+          'C',
+          start_date,
+          end_date,
+          sort_id,
+          acct_name,
+          acct_date
+        from REP_TOTAL_ACCOUNT
+        where pay_flag = 'D' and currency != 'USD';
+
+    END IF;
+
+    select count(*)
+    into countnum
+    from REP_TOTAL_ACCOUNT
+    where pay_flag = 'D' and currency != 'USD';
+
+    IF countnum = 0
+    THEN
+
+      insert into REP_TOTAL_ACCOUNT
+        select
+          gen_id,
+          ref_no,
+          cust_name,
+          acct_item_type_id,
+          name,
+          cycle_begin_date,
+          cycle_end_date,
+          null,
+          currency,
+          'D',
+          start_date,
+          end_date,
+          sort_id,
+          acct_name,
+          acct_date
+        from REP_TOTAL_ACCOUNT
+        where pay_flag = 'C' and currency != 'USD';
+
+    END IF;
+
+    --增加(如果CURRENCY为USD时，应收或者应付没有项，就把另一类的记录的amount置为null，复制之)
+    select count(*)
+    into countnum
+    from REP_TOTAL_ACCOUNT
+    where pay_flag = 'C' and currency = 'USD';
+
+    IF countnum = 0
+    THEN
+
+      insert into REP_TOTAL_ACCOUNT
+        select
+          gen_id,
+          ref_no,
+          cust_name,
+          acct_item_type_id,
+          name,
+          cycle_begin_date,
+          cycle_end_date,
+          null,
+          'USD',
+          'C',
+          start_date,
+          end_date,
+          sort_id,
+          acct_name,
+          acct_date
+        from REP_TOTAL_ACCOUNT
+        where CURRENCY = 'USD' and PAY_FLAG = 'D';
+
+    END IF;
+
+    select count(*)
+    into countnum
+    from REP_TOTAL_ACCOUNT
+    where pay_flag = 'D' and currency = 'USD';
+
+    IF countnum = 0
+    THEN
+
+      insert into REP_TOTAL_ACCOUNT
+        select
+          gen_id,
+          ref_no,
+          cust_name,
+          acct_item_type_id,
+          name,
+          cycle_begin_date,
+          cycle_end_date,
+          null,
+          'USD',
+          'D',
+          start_date,
+          end_date,
+          sort_id,
+          acct_name,
+          acct_date
+        from REP_TOTAL_ACCOUNT
+        where CURRENCY = 'USD' and PAY_FLAG = 'C';
+
+    END IF;
+
+    retCode := 0; --0为初始值1代表无异常-1代表异常
+    Message := 'no error'; --异常信息
+    OPEN v_cursor FOR
+    select *
+    from REP_TOTAL_ACCOUNT;
+
+    retCode := 1;
+
+    Exception
+    when others
+    then
+    retCode := -1; --代表失败
+    Message := SQLERRM;
+
+  END;
+
+
+-------------------------------------------------------------
+val createSql = new StringBuilder()
+    createSql.append("create table "+toTable)
+      .append("(")
+      .append("gen_id NUMBER,")
+      .append("ref_no VARCHAR2(32),")
+      .append("cust_name VARCHAR2(100),")
+      .append("acct_item_type_id NUMBER,")
+      .append("name VARCHAR2(50),")
+      .append("cycle_begin_date  NUMBER,")
+      .append("cycle_end_date   NUMBER,")
+      .append("amount NUMBER,")
+      .append("currency  CHAR(3),")
+      .append("pay_flag  CHAR(1),")
+      .append("start_date NUMBER,")
+      .append("end_date   NUMBER,")
+      .append("sort_id    NUMBER,")
+      .append("acct_name  VARCHAR2(255),")
+      .append("acct_date  NUMBER")
+      .append(")")
+
+    DBUtil.createTable(createSql.toString(),toTable)

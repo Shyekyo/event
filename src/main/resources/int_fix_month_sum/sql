@@ -1,0 +1,853 @@
+CREATE OR REPLACE PROCEDURE int_fix_month_sum (
+   p_acct_data_class   IN   NUMBER,
+   p_cycle_id          IN   NUMBER,
+   p_bureau_id		   IN   NUMBER
+)
+AS
+--declare
+   err_num             NUMBER;
+   err_msg             VARCHAR2 (100);
+   v_acct_data_class   VARCHAR (3);
+   v_month             VARCHAR (6);
+   v_start_time        VARCHAR2 (20);
+   v_file_type         VARCHAR2 (3);
+   v_first_date        NUMBER (8);
+   v_last_date         NUMBER (8);
+   v_bill_id           NUMBER (10);
+   v_bill_id_char      VARCHAR2 (10);
+   v_cursor            NUMBER;
+   v_createstring      VARCHAR2 (2500);
+   v_numrows           INTEGER;
+	v_strdebug   VARCHAR2 (400);
+	v_bureau_id			varchar (3);
+	v_condition			varchar (100);
+--p_acct_data_class     varchar(3);
+--p_month               number(6);
+BEGIN
+
+dbms_output.put_line( '1 step' );
+--   p_acct_data_class  :=99;--   varchar(3);
+--   p_month            :=200707;--   number(6);
+   v_acct_data_class := TO_CHAR (p_acct_data_class);
+--   v_file_type := '31';
+
+   v_bureau_id :=TO_CHAR(p_bureau_id);
+   v_file_type :=TO_CHAR(p_bureau_id);
+   v_bill_id := p_cycle_id;
+--	if  p_bureau_id>5  then
+--		RAISE_APPLICATION_ERROR(-20123, 'Invald product code', TRUE);
+--	end if;
+
+--香港的数据，取大陆+香港
+
+   if  p_bureau_id=1 or p_bureau_id=3
+   then
+   		v_condition			:=' route_id in (1,3) and settle_month = '|| p_cycle_id ;
+   else
+   		v_condition			:=' route_id='|| p_bureau_id|| ' and settle_month = '|| p_cycle_id ;
+   end if;
+
+dbms_output.put_line( v_condition );
+
+	SELECT begin_date,end_date
+		INTO v_first_date,v_last_date
+	FROM 	acct_billing_cycle
+	WHERE 	BILLING_CYCLE_ID=p_cycle_id;
+
+   v_bill_id_char := TO_CHAR ( p_cycle_id );
+
+	v_month := substr(v_bill_id_char,1,6);
+   SELECT TO_CHAR (SYSDATE, 'YYYY-MM-DD hh24:mi:ss')
+     INTO v_start_time
+     FROM SYS.DUAL;
+
+
+dbms_output.put_line( '2 step' );
+
+
+   BEGIN
+      EXECUTE IMMEDIATE 'truncate table cdr_day_sum_bur' ||v_bureau_id||'_'|| p_cycle_id;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+dbms_output.put_line( 'cdr_day_sum_bur'||v_bureau_id||'_'|| p_cycle_id );
+
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   cdr_day_sum_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+	call_year            NUMBER(4)  not null,
+	call_month           NUMBER(2)  not null,
+	call_day             NUMBER(2)  not null,
+	caller_country_id    NUMBER(5)  not null,
+	caller_province_id   NUMBER(5)  not null,
+	caller_zone          NUMBER(5)  not null,
+	caller_carrier_id    NUMBER(5)  not null,
+	caller_type          CHAR(1)    not null,
+	callee_type          CHAR(1)    not null,
+	callee_carrier_id    NUMBER(5)  not null,
+	callee_zone          NUMBER(5)  not null,
+	callee_province_id   NUMBER(5)  not null,
+	callee_country_id    NUMBER(5)  not null,
+	trans_co             NUMBER(5)  null    ,
+	service_type         NUMBER(3)  not null,
+	direction            NUMBER(2)  not null,
+	route_type           CHAR(1)    not null,
+	switch_id            NUMBER(5)  not null,
+	counts               NUMBER(18) null    ,
+	seconds              NUMBER(18) null    ,
+	bill_minute          NUMBER(18) null    ,
+	settle_min           NUMBER(18) null    ,
+	intrunk_carrier_id   NUMBER(5)  not null,
+	outtrunk_carrier_id  NUMBER(5)  not null,
+	route_id             NUMBER(10) not null,
+	pre_fee              NUMBER(18) null    ,
+	fee                  NUMBER(18) null    ,
+	receive_day          NUMBER(8)  not null,
+	destination_id       NUMBER(10) null
+        )  ';
+--dbms_output.put_line( v_createstring );
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+
+
+   BEGIN
+      EXECUTE IMMEDIATE 'truncate table cdr_hour_sum_bur'||v_bureau_id||'_' || p_cycle_id;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   cdr_hour_sum_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+          call_year            NUMBER(4)              not null,
+          call_month           NUMBER(2)              not null,
+          call_day             NUMBER(2)              not null,
+          call_hour            NUMBER(2)              not null,
+          caller_country_id    NUMBER(5)              not null,
+          caller_province_id   NUMBER(5)              not null,
+          caller_zone          NUMBER(5)              not null,
+          caller_carrier_id    NUMBER(5)              not null,
+          caller_type          CHAR(1)                not null,
+          callee_type          CHAR(1)                not null,
+          callee_carrier_id    NUMBER(5)              not null,
+          callee_zone          NUMBER(5)              not null,
+          callee_province_id   NUMBER(5)              not null,
+          callee_country_id    NUMBER(5)              not null,
+          trans_co             NUMBER(5)              null    ,
+          service_type         NUMBER(3)              not null,
+          direction            NUMBER(2)              not null,
+          route_type           CHAR(1)                not null,
+          switch_id            NUMBER(5)              not null,
+          counts               NUMBER(18)             null    ,
+          seconds              NUMBER(18)             null    ,
+          bill_minute          NUMBER(18)             null    ,
+          settle_min           NUMBER(18)             null    ,
+          intrunk_carrier_id   NUMBER(5)              not null,
+          outtrunk_carrier_id  NUMBER(5)              not null,
+          route_id             NUMBER(10)             not null,
+          pre_fee              NUMBER(18)             null    ,
+          fee                  NUMBER(18)             null    ,
+          receive_day          NUMBER(8)              not null,
+          destination_id       NUMBER(10)             null
+        )'
+        ;
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+dbms_output.put_line( '4 step' );
+
+   BEGIN
+      EXECUTE IMMEDIATE    'truncate table day_sum_bur'||v_bureau_id||'_'|| p_cycle_id ;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   day_sum_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+          call_year            NUMBER(4)              not null,
+          call_month           NUMBER(2)              not null,
+          call_day             NUMBER(2)              not null,
+          caller_country_id    NUMBER(5)              not null,
+          caller_province_id   NUMBER(5)              not null,
+          caller_zone          NUMBER(5)              not null,
+          caller_carrier_id    NUMBER(5)              not null,
+          caller_type          CHAR(1)                not null,
+          callee_type          CHAR(1)                not null,
+          callee_carrier_id    NUMBER(5)              not null,
+          callee_zone          NUMBER(5)              not null,
+          callee_province_id   NUMBER(5)              not null,
+          callee_country_id    NUMBER(5)              not null,
+          trans_co             NUMBER(5)              null    ,
+          service_type         NUMBER(3)              not null,
+          direction            NUMBER(2)              not null,
+          route_type           CHAR(1)                not null,
+          switch_id            NUMBER(5)              not null,
+          counts               NUMBER(18)             null    ,
+          seconds              NUMBER(18)             null    ,
+          bill_minute          NUMBER(18)             null    ,
+          settle_min           NUMBER(18)             null    ,
+          intrunk_carrier_id   NUMBER(5)              not null,
+          outtrunk_carrier_id  NUMBER(5)              not null,
+          route_id             NUMBER(10)             not null,
+          pre_fee              NUMBER(18)             null    ,
+          fee                  NUMBER(18)             null    ,
+          receive_day          NUMBER(8)              not null,
+          destination_id       NUMBER(10)             null
+        )'
+        ;
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+dbms_output.put_line( '5 step' );
+
+   BEGIN
+      EXECUTE IMMEDIATE    'truncate table  day_sum_nobill_bur'||v_bureau_id||'_'|| p_cycle_id ;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   day_sum_nobill_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+          call_year            NUMBER(4)              not null,
+          call_month           NUMBER(2)              not null,
+          call_day             NUMBER(2)              not null,
+          caller_country_id    NUMBER(5)              not null,
+          caller_province_id   NUMBER(5)              not null,
+          caller_zone          NUMBER(5)              not null,
+          caller_carrier_id    NUMBER(5)              not null,
+          caller_type          CHAR(1)                not null,
+          callee_type          CHAR(1)                not null,
+          callee_carrier_id    NUMBER(5)              not null,
+          callee_zone          NUMBER(5)              not null,
+          callee_province_id   NUMBER(5)              not null,
+          callee_country_id    NUMBER(5)              not null,
+          trans_co             NUMBER(5)              null    ,
+          service_type         NUMBER(3)              not null,
+          direction            NUMBER(2)              not null,
+          route_type           CHAR(1)                not null,
+          switch_id            NUMBER(5)              not null,
+          counts               NUMBER(18)             null    ,
+          seconds              NUMBER(18)             null    ,
+          bill_minute          NUMBER(18)             null    ,
+          settle_min           NUMBER(18)             null    ,
+          intrunk_carrier_id   NUMBER(5)              not null,
+          outtrunk_carrier_id  NUMBER(5)              not null,
+          route_id             NUMBER(10)             not null,
+          pre_fee              NUMBER(18)             null    ,
+          fee                  NUMBER(18)             null    ,
+          receive_day          NUMBER(8)              not null,
+          destination_id       NUMBER(10)             null
+        )'
+        ;
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+
+dbms_output.put_line( '7 step' );
+
+   BEGIN
+
+      EXECUTE IMMEDIATE    'truncate table hour_sum_bur'||v_bureau_id||'_'|| p_cycle_id;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   hour_sum_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+          call_year            NUMBER(4)              not null,
+          call_month           NUMBER(2)              not null,
+          call_day             NUMBER(2)              not null,
+          call_hour            NUMBER(2)              not null,
+          caller_country_id    NUMBER(5)              not null,
+          caller_province_id   NUMBER(5)              not null,
+          caller_zone          NUMBER(5)              not null,
+          caller_carrier_id    NUMBER(5)              not null,
+          caller_type          CHAR(1)                not null,
+          callee_type          CHAR(1)                not null,
+          callee_carrier_id    NUMBER(5)              not null,
+          callee_zone          NUMBER(5)              not null,
+          callee_province_id   NUMBER(5)              not null,
+          callee_country_id    NUMBER(5)              not null,
+          trans_co             NUMBER(5)              null    ,
+          service_type         NUMBER(3)              not null,
+          direction            NUMBER(2)              not null,
+          route_type           CHAR(1)                not null,
+          switch_id            NUMBER(5)              not null,
+          counts               NUMBER(18)             null    ,
+          seconds              NUMBER(18)             null    ,
+          bill_minute          NUMBER(18)             null    ,
+          settle_min           NUMBER(18)             null    ,
+          intrunk_carrier_id   NUMBER(5)              not null,
+          outtrunk_carrier_id  NUMBER(5)              not null,
+          route_id             NUMBER(10)             not null,
+          pre_fee              NUMBER(18)             null    ,
+          fee                  NUMBER(18)             null    ,
+          receive_day          NUMBER(8)              not null,
+          destination_id       NUMBER(10)             null
+        )'
+        ;
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+dbms_output.put_line( '8 step' );
+
+
+   BEGIN
+      EXECUTE IMMEDIATE    'truncate table  hour_sum_nobill_bur'||v_bureau_id||'_'|| p_cycle_id ;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -942
+         THEN
+            v_cursor := DBMS_SQL.open_cursor;
+            v_createstring :=
+                  'CREATE   TABLE   hour_sum_nobill_bur'||v_bureau_id||'_'
+               || p_cycle_id
+               || ' (
+          call_year            NUMBER(4)              not null,
+          call_month           NUMBER(2)              not null,
+          call_day             NUMBER(2)              not null,
+          call_hour            NUMBER(2)              not null,
+          caller_country_id    NUMBER(5)              not null,
+          caller_province_id   NUMBER(5)              not null,
+          caller_zone          NUMBER(5)              not null,
+          caller_carrier_id    NUMBER(5)              not null,
+          caller_type          CHAR(1)                not null,
+          callee_type          CHAR(1)                not null,
+          callee_carrier_id    NUMBER(5)              not null,
+          callee_zone          NUMBER(5)              not null,
+          callee_province_id   NUMBER(5)              not null,
+          callee_country_id    NUMBER(5)              not null,
+          trans_co             NUMBER(5)              null    ,
+          service_type         NUMBER(3)              not null,
+          direction            NUMBER(2)              not null,
+          route_type           CHAR(1)                not null,
+          switch_id            NUMBER(5)              not null,
+          counts               NUMBER(18)             null    ,
+          seconds              NUMBER(18)             null    ,
+          bill_minute          NUMBER(18)             null    ,
+          settle_min           NUMBER(18)             null    ,
+          intrunk_carrier_id   NUMBER(5)              not null,
+          outtrunk_carrier_id  NUMBER(5)              not null,
+          route_id             NUMBER(10)             not null,
+          pre_fee              NUMBER(18)             null    ,
+          fee                  NUMBER(18)             null    ,
+          receive_day          NUMBER(8)              not null,
+          destination_id       NUMBER(10)             null
+        )'
+       ;
+            DBMS_SQL.parse (v_cursor, v_createstring, DBMS_SQL.v7);
+            v_numrows := DBMS_SQL.EXECUTE (v_cursor);
+            DBMS_SQL.close_cursor (v_cursor);
+         END IF;
+   END;
+
+
+dbms_output.put_line( '10 step' );
+
+
+   EXECUTE IMMEDIATE    'insert into cdr_day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' (call_year, call_month,call_day, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id)
+   select call_year,call_month,call_day,caller_country_id,caller_province_id,
+   caller_zone,caller_carrier_id,caller_type,callee_type,callee_carrier_id,
+   callee_zone,callee_province_id, callee_country_id,
+   decode(dir,1,intrunk_carrier_id,2,outtrunk_carrier_id,3,outtrunk_carrier_id,intrunk_carrier_id),
+   service_type,dir,route_type,switch_id,sum(counts),
+   sum(seconds),ceil(sum(seconds)/60),ceil(sum(seconds)/60),intrunk_carrier_id,
+   outtrunk_carrier_id, route_id,sum(pre_fee),sum(fee),'
+                     || v_month
+                     || ',destination_id  from grouped_cdr_'
+                     || v_month
+                     || ' where '||v_condition
+                     || ' group by call_year, call_month,call_day, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,
+   decode(dir,1,intrunk_carrier_id,2,outtrunk_carrier_id,3,outtrunk_carrier_id,intrunk_carrier_id),
+   service_type, dir, route_type, switch_id,
+   intrunk_carrier_id, outtrunk_carrier_id, route_id,destination_id';
+--   intrunk_carrier_id, outtrunk_carrier_id,'||v_bureau_id||',destination_id';保留route_id字段，最后改
+
+   COMMIT;
+
+dbms_output.put_line( '14 step' );
+
+   EXECUTE IMMEDIATE    'insert into cdr_hour_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' (call_year, call_month,call_day, call_hour, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id)
+   select call_year,call_month,call_day,call_hour,caller_country_id,caller_province_id,
+   caller_zone,caller_carrier_id,caller_type,callee_type,callee_carrier_id,
+   callee_zone,callee_province_id, callee_country_id,
+   decode(dir,1,intrunk_carrier_id,2,outtrunk_carrier_id,3,outtrunk_carrier_id,intrunk_carrier_id),
+   service_type,dir,route_type,switch_id,sum(counts),
+   sum(seconds),ceil(sum(seconds)/60),ceil(sum(seconds)/60),intrunk_carrier_id,
+   outtrunk_carrier_id, route_id,sum(pre_fee),sum(fee),'
+                     || v_month
+                     || ',destination_id  from grouped_cdr_'
+                     || v_month
+                     || ' where '||v_condition
+                     || ' group by call_year, call_month,call_day, call_hour,caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,
+   decode(dir,1,intrunk_carrier_id,2,outtrunk_carrier_id,3,outtrunk_carrier_id,intrunk_carrier_id),
+   service_type, dir, route_type, switch_id,
+   intrunk_carrier_id, outtrunk_carrier_id, route_id,destination_id';
+--   intrunk_carrier_id, outtrunk_carrier_id,'||v_bureau_id||',destination_id';   保留route_id字段，最后改
+
+
+   COMMIT;
+
+-----------------------------------------------------------------------------
+
+
+dbms_output.put_line( '15 step' );
+
+   --service_type != 74 added by yangyu 20100719
+   EXECUTE IMMEDIATE    'insert into day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' (call_year, call_month,call_day, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id)
+   select call_year, call_month,call_day, caller_country_id,caller_province_id,
+   caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id
+   from cdr_day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' where service_type != 74 and service_type != 75 ' ;
+
+   COMMIT;
+
+dbms_output.put_line( '16 step' );
+
+   --service_type = 74 added by yangyu 20100719
+   EXECUTE IMMEDIATE    'insert into day_sum_nobill_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' (call_year, call_month,call_day, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id)
+   select call_year, call_month,call_day, caller_country_id,caller_province_id,
+   caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id
+   from cdr_day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' where service_type in (74,75 )  ' ;
+
+   COMMIT;
+
+
+dbms_output.put_line( '17 step' );
+
+
+
+	--删除中国电信内部运营商数据
+
+	   EXECUTE IMMEDIATE    ' insert into day_sum_nobill_bur'||v_bureau_id||'_'
+	   				 || p_cycle_id
+	   				 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where substr(cust_code,1,3)=''PRO'' )';
+	   COMMIT;
+
+	   EXECUTE IMMEDIATE    ' delete from day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where substr(cust_code,1,3)=''PRO'' )';
+	   COMMIT;
+
+
+	--CT大陆数据
+   if  p_bureau_id=1
+   then
+
+	   EXECUTE IMMEDIATE    ' insert into day_sum_nobill_bur'||v_bureau_id||'_'
+	   				 || p_cycle_id
+	   				 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+
+		--trans_co在stt_object_int_comp表里的，放在香港公司结算
+	   EXECUTE IMMEDIATE    ' delete from day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+    	EXECUTE IMMEDIATE    'insert into day_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  trans_co=649 ';
+	   COMMIT;
+
+--删除和国际公司结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  trans_co=649 ';
+	   commit;
+
+    	EXECUTE IMMEDIATE    'insert into day_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   COMMIT;
+
+--删除交换机产生的和大陆结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   commit;
+
+
+	   EXECUTE IMMEDIATE    ' update day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' set route_id=1 ';
+
+	   commit;
+
+	   EXECUTE IMMEDIATE    ' delete from day_sum_nobill_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+
+	--CTHK  香港数据
+   ELSIF  p_bureau_id=3
+   THEN
+
+
+    	EXECUTE IMMEDIATE    'insert into day_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   COMMIT;
+
+--删除交换机产生的和大陆结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   commit;
+
+    	EXECUTE IMMEDIATE    'insert into day_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from day_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where   trans_co not in ( select cust_id from stt_object where cust_location=3 ) ';
+	   COMMIT;
+
+
+	   EXECUTE IMMEDIATE    ' delete from day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co not in ( select cust_id from stt_object where cust_location=3 )';
+   	   commit;
+
+	   EXECUTE IMMEDIATE    ' update day_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' set route_id=3 ';
+   	   commit;
+
+	   EXECUTE IMMEDIATE    ' delete from day_sum_nobill_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co not in ( select cust_id from stt_object where cust_location=3 )';
+   	   commit;
+
+
+   end if;
+
+dbms_output.put_line( '19 step' );
+
+   DELETE FROM settle_carrier
+         WHERE BILLING_CYCLE_ID = p_cycle_id and
+               bureau_id = p_bureau_id;
+
+   COMMIT;
+
+
+dbms_output.put_line( '20 step' );
+
+   EXECUTE IMMEDIATE    'insert into settle_carrier select distinct '
+                     || v_month
+                     || ', trans_co,'
+                     || v_bureau_id
+                     || ','
+                     || p_cycle_id
+                     ||' from day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id;
+
+   COMMIT;
+
+
+dbms_output.put_line( '21 step' );
+
+
+  EXECUTE IMMEDIATE    'insert into hour_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id
+                     || ' (call_year, call_month,call_day, call_hour, caller_country_id,
+   caller_province_id, caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id)
+   select call_year, call_month,call_day, call_hour, caller_country_id,caller_province_id,
+   caller_zone, caller_carrier_id, caller_type,
+   callee_type, callee_carrier_id, callee_zone, callee_province_id,
+   callee_country_id,trans_co,service_type, direction, route_type, switch_id,
+   counts,seconds, bill_minute, settle_min,intrunk_carrier_id,
+   outtrunk_carrier_id, route_id, pre_fee, fee, receive_day,destination_id
+   from cdr_hour_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id ;
+
+   COMMIT;
+
+
+    -----------------------------------------------------------------------------
+	--删除中国电信内部运营商结算数据
+	   EXECUTE IMMEDIATE    ' insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+	   				 || p_cycle_id
+	   				 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where substr(cust_code,1,3)=''PRO'' )';
+	   COMMIT;
+
+		--trans_co在stt_object_int_comp表里的，放在香港公司结算
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where substr(cust_code,1,3)=''PRO'' )';
+	   COMMIT;
+
+
+	--CT大陆数据
+   if  p_bureau_id=1
+   then
+--	   EXECUTE IMMEDIATE    'insert into day_sum_bur3_'
+--                     || v_month
+--                     ||' select * from day_sum_bur1_'
+--   					 || v_month
+--   					 || ' where trans_co  in ( select cust_id from stt_object_int_comp )';
+
+--	   COMMIT;
+	   EXECUTE IMMEDIATE    ' insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+	   				 || p_cycle_id
+	   				 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+
+		--trans_co在stt_object_int_comp表里的，放在香港公司结算
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+    	EXECUTE IMMEDIATE    'insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  trans_co=649 ';
+	   COMMIT;
+
+--删除和国际公司结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  trans_co=649 ';
+	   commit;
+
+    	EXECUTE IMMEDIATE    'insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   COMMIT;
+
+--删除交换机产生的和大陆结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   commit;
+
+
+	   EXECUTE IMMEDIATE    ' update hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' set route_id=1 ';
+   	   commit;
+
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_nobill_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co  in ( select cust_id from stt_object where cust_location=3 )';
+	   COMMIT;
+
+
+	--CTHK  香港数据
+   ELSIF  p_bureau_id=3
+   THEN
+--	   EXECUTE IMMEDIATE    'insert into day_sum_bur1_'
+--                     || v_month
+--                     ||' select * from day_sum_bur3_'
+--   					 || v_month
+--   					 || ' where trans_co not in ( select cust_id from stt_object_int_comp )';
+--   	   commit;
+
+
+    	EXECUTE IMMEDIATE    'insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   COMMIT;
+
+--删除交换机产生的和大陆结算的数据
+     	EXECUTE IMMEDIATE    ' delete  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where  route_id=3 and trans_co=1000 ';
+	   commit;
+
+    	EXECUTE IMMEDIATE    'insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+		                 || p_cycle_id
+		                 || ' where   trans_co not in ( select cust_id from stt_object where cust_location=3 ) ';
+	   COMMIT;
+
+
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co not in ( select cust_id from stt_object where cust_location=3 )';
+   	   commit;
+
+	   EXECUTE IMMEDIATE    ' update hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' set route_id=3 ';
+   	   commit;
+
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_nobill_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where trans_co not in ( select cust_id from stt_object where cust_location=3 )';
+   	   commit;
+
+   end if;
+
+--删除业务类型=74、75的数据
+	   EXECUTE IMMEDIATE    ' insert into hour_sum_nobill_bur'||v_bureau_id||'_'
+	   				 || p_cycle_id
+	   				 || ' select *  from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where service_type in ( 74, 75) ';
+	   COMMIT;
+
+		--trans_co在stt_object_int_comp表里的，放在香港公司结算
+	   EXECUTE IMMEDIATE    ' delete from hour_sum_bur'||v_bureau_id||'_'
+   					 || p_cycle_id
+   					 || ' where service_type in ( 74, 75)';
+	   COMMIT;
+
+dbms_output.put_line( '26 step' );
+
+
+   EXECUTE IMMEDIATE    'insert into MONTH_SUM_LOG_IVOSS
+   (acct_data_class_id, file_type_id, settle_month, bill_cycle_id,
+   start_time, end_time, record_number, success_flag, failed_reason, sum_callnum, sum_duration, sum_fee)
+   select '
+                     || v_acct_data_class
+                     || ', '
+                     || v_file_type
+                     || ', '
+                     || v_month
+                     || ', '
+                     || v_bill_id_char
+                     || ',
+   to_date('''
+                     || v_start_time
+                     || ''', ''YYYY-MM-DD hh24:mi:ss''), sysdate, sum(sum_recs), 1, null,
+   sum(sum_counts), sum(sum_seconds), sum(sum_fee )
+   from
+   (
+   select count(*) sum_recs,sum(counts) sum_counts, sum(seconds)/60 sum_seconds, sum(pre_fee)+sum(fee) sum_fee
+   from day_sum_bur'||v_bureau_id||'_'
+                     || p_cycle_id||')'
+;
+
+
+
+-----------------------------------------------------------------------------
+   COMMIT;
+EXCEPTION
+   WHEN OTHERS
+   THEN
+      ROLLBACK;
+      err_num := SQLCODE;
+      err_msg := SUBSTR (SQLERRM, 1, 100);
+      DBMS_OUTPUT.put_line (err_num);
+      DBMS_OUTPUT.put_line (err_msg);
+
+      INSERT INTO MONTH_SUM_LOG_IVOSS
+                  (acct_data_class_id, file_type_id, settle_month,
+                   bill_cycle_id,
+                   start_time, end_time,
+                   record_number, success_flag, failed_reason, sum_callnum,
+                   sum_duration, sum_fee
+                  )
+           VALUES (v_acct_data_class, TO_NUMBER (v_file_type), v_month,
+                   v_bill_id,
+                   TO_DATE (v_start_time, 'YYYY-MM-DD hh24:mi:ss'), SYSDATE,
+                   0, 0, err_msg, 0,
+                   0, 0
+                  );
+
+      COMMIT;
+END;

@@ -30,11 +30,6 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.typesafe.scala-logging</groupId>
-      <artifactId>scala-logging-slf4j_2.10</artifactId>
-      <version>2.1.2</version>
-    </dependency>
     <!-- HDFS Client -->
     <!--<dependency>
       <groupId>org.apache.hadoop</groupId>
@@ -58,6 +53,7 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-yarn_2.11</artifactId>
       <version>${spark.version}</version>
+      <scope>provided</scope>
       <!--<scope>compile</scope>-->
     </dependency>
     <!-- Spark Core -->
@@ -65,6 +61,7 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.11</artifactId>
       <version>${spark.version}</version>
+      <scope>provided</scope>
       <!--<scope>compile</scope>-->
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
@@ -72,6 +69,7 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-mllib_2.11</artifactId>
       <version>${spark.version}</version>
+      <scope>provided</scope>
       <!--<scope>compile</scope>-->
     </dependency>
     <!--<dependency>
@@ -83,16 +81,19 @@
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-reflect</artifactId>
       <version>${scala.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.11</artifactId>
       <version>${spark.version}</version>
+      <scope>provided</scope>
       <!--<scope>compile</scope>-->
     </dependency>
     <!--<dependency>
@@ -106,6 +107,12 @@
       <artifactId>ojdbc14</artifactId>
       <version>10.2.0.4.0</version>
       <!--<scope>runtime</scope>-->
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.12</version>
     </dependency>
   </dependencies>
 
@@ -172,7 +179,7 @@
               <transformers>
                 <transformer
                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>ideal.Rep_total_account_commit</mainClass>
+                  <mainClass>ideal.hhs</mainClass>
                 </transformer>
               </transformers>
             </configuration>

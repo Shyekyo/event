@@ -12,6 +12,8 @@ object Constants {
   val SPARK_APP_YARN : String = "yarn-client"
 
   val ORACLE_CTGIRM_URL : String= "jdbc:oracle:thin:@//192.9.100.205:1521/ORCL"
+  val ORACLE_CTGIRM_URL_2 : String= "jdbc:oracle:thin:@//192.9.100.205:1521/ORCL"
+  //"jdbc:oracle:thin:@//ip:1521/dbinstance"
   val ORACLE_CTGIRM_USER: String= "ctgirm"
   val ORACLE_CTGIRM_PASSWORD : String= "Ctgtest_m_205"
 }

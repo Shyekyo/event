@@ -23,7 +23,7 @@ object DBUtil {
     if(destation==204){
       init204()
     }else if(destation==205){
-      init204()
+      init205()
     }
     addSQL(sql)
     Close()
@@ -36,7 +36,7 @@ object DBUtil {
       if(destation==204){
         init204()
       }else if(destation==205){
-        init204()
+        init205()
       }
       _logging.info("执行的SQL：\n" + sql + "\n")
       val rs = statement.executeQuery(sql)
@@ -50,6 +50,25 @@ object DBUtil {
       Close()
     }
     table.toArray
+  }
+
+  def deleteOra(sql: String,destation:Int=204) = {
+    val table = ArrayBuffer[Array[String]]()
+    try {
+      if(destation==204){
+        init204()
+      }else if(destation==205){
+        init205()
+      }
+      _logging.info("执行的SQL：\n" + sql + "\n")
+      val flag = statement.execute(sql)
+      _logging.info(flag.toString)
+
+    } catch {
+      case ex: Exception => ex.printStackTrace()
+    } finally {
+      Close()
+    }
   }
 
   private def getTuple(rs: ResultSet): Array[String] = {
@@ -72,7 +91,7 @@ object DBUtil {
       if (destation == 204) {
         init204()
       } else if (destation == 205) {
-        init204()
+        init205()
       }
       val sql = s"truncate table ${tableName}"
       _logging.info("执行的SQL：\n" + sql + "\n")
@@ -88,7 +107,7 @@ object DBUtil {
       if(destation==204){
         init204()
       }else if(destation==205){
-        init204()
+        init205()
       }
       val sql = "drop table " + tableName
       _logging.info("执行的SQL：\n" + sql + "\n")
@@ -125,7 +144,7 @@ object DBUtil {
       if(destation==204){
         init204()
       }else if(destation==205){
-        init204()
+        init205()
       }
       statement.execute(sql)
     } catch {
@@ -145,7 +164,7 @@ object DBUtil {
       if(destation==204){
         init204()
       }else if(destation==205){
-        init204()
+        init205()
       }
       _logging.info("执行的SQL：\n" + sql + "\n")
       if(falg){
@@ -160,27 +179,31 @@ object DBUtil {
   }
 
   def tableExists(tableName:String,destation:Int=204):Boolean ={
-    Try {
-      try {
-        if(destation==204){
-          init204()
-        }else if(destation==205){
-          init204()
-        }
-        val sql = getTableExistsQuery(tableName)
-        _logging.info("执行的SQL：\n" + sql + "\n")
-        val stat = conn.prepareStatement(sql)
-        stat.executeQuery()
-      } catch {
-        case ex: Exception => ex.printStackTrace()
-      } finally {
-        Close()
+    var result=false
+    try {
+      if(destation==204){
+        init204()
+      }else if(destation==205){
+        init205()
       }
-    }.isSuccess
+      val sql = getTableExistsQuery(tableName)
+      _logging.info("tableExists => 执行的SQL：\n" + sql + "\n")
+      val stat = conn.prepareStatement(sql)
+      val rs = stat.executeQuery()
+      rs.next();
+      val count = rs.getInt(1)
+      _logging.info("tableExists => 执行结果："+count)
+      if(count==1) result=true
+    } catch {
+      case ex: Exception => ex.printStackTrace()
+    } finally {
+      Close()
+    }
+    result
   }
 
   private def getTableExistsQuery(table: String): String = {
-    s"SELECT * FROM $table WHERE 1=0"
+    s"SELECT count(*) FROM user_tables WHERE table_name = upper('$table')"
   }
 
   def main(args: Array[String]): Unit = {

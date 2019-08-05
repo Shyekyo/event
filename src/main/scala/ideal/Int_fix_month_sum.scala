@@ -4,7 +4,7 @@ import ideal.Rep_total_account_commit1.{bureauId, refNo}
 import ideal.constants.Constants
 import ideal.util.{DBUtil, DateUtil, SparkUtil}
 import org.apache.hadoop.hdfs.protocol.proto.HdfsProtos.DataEncryptionKeyProtoOrBuilder
-import org.apache.log4j.Logger
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{DecimalType, IntegerType, StringType, StructField, StructType}
 
@@ -14,25 +14,21 @@ import org.apache.spark.sql.types.{DecimalType, IntegerType, StringType, StructF
 object Int_fix_month_sum {
   val _logging = Logger.getLogger(Int_fix_month_sum.getClass)
   var p_acct_data_class=31
-  var p_cycle_id = 201806000
+  var p_cycle_id = 201811000
   var p_bureau_id = 4
 
   def main(args: Array[String]): Unit = {
-    if (args.length == 2) {
+    Logger.getLogger("org").setLevel(Level.WARN)
+    if (args.length == 3) {
       p_acct_data_class = args(0).toInt
       p_cycle_id = args(1).toInt
       p_bureau_id = args(2).toInt
     }
-
-    //Logger.getLogger("org").setLevel(Level.WARN)
-    if(args.length==2){
-      bureauId =args(0).toInt
-      refNo = args(0).toInt
-    }
     val spark = SparkSession.builder().
       appName(this.getClass.getSimpleName).
-      master(Constants.SPARK_APP_MASTER_LOCAL).
-      config("spark.sql.warehouse.dir", "D:/GITRepo/event/spark-warehouse")
+      master(Constants.SPARK_APP_YARN).
+      enableHiveSupport().
+      config("spark.sql.warehouse.dir", "/user/hive/warehouse")
       //config("spark.sql.warehouse.dir", prefix2+"spark-warehouse").
       .getOrCreate()
     import spark.implicits._
@@ -45,7 +41,7 @@ object Int_fix_month_sum {
     val v_acct_data_class = p_acct_data_class.toString
     val v_bureau_id =p_bureau_id.toString
     val v_file_type =p_bureau_id.toString
-    val v_bill_id = p_cycle_id;
+    val v_bill_id = p_cycle_id
     val v_bill_id_char = p_cycle_id.toString
     var v_month = v_bill_id_char.substring(0,6)
     val v_start_time = DateUtil.getToday()

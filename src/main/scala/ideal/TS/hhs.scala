@@ -8,15 +8,15 @@ import org.apache.spark.sql.SparkSession
   */
 object hhs {
   def main(args: Array[String]): Unit = {
+    //System.setProperty("HADOOP_USER_NAME","hive")
     val spark = SparkSession.builder().
-      appName(this.getClass.getSimpleName).
-      master(Constants.SPARK_APP_YARN).enableHiveSupport()
-      //config("spark.sql.warehouse.dir", "D:/GITRepo/event/spark-warehouse")
+      appName(this.getClass.getSimpleName)
+      .master(Constants.SPARK_APP_MASTER_LOCAL)
+      // .enableHiveSupport()
+      .config("spark.sql.warehouse.dir", "D:/GITRepo/event/spark-warehouse")
+      //config("spark.sql.warehouse.dir", "/user/hive/warehouse")
       .getOrCreate()
     import spark.implicits._
-    val sql = "select count(*) from DETAIL_CDR_BUR"
-    val df = spark.sql(sql)
-    df.show()
-    df.foreach(print(_))
+    spark.stop()
   }
 }

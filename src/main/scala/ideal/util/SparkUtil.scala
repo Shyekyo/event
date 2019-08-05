@@ -46,7 +46,22 @@ object SparkUtil {
       props = getOracleCtgirmProps()
       url = Constants.ORACLE_CTGIRM_URL
     }
-    df.write.mode(SaveMode.Append)
+    df.write.format("jdbc").mode(SaveMode.Append)
+      .option("fetchsize", 1000)
+      .jdbc(
+        url,
+        TableName,
+        props
+      )
+    _logging.info(s"save table $TableName is ok !")
+  }
+
+  def writeDataIntoCTG(df: DataFrame, TableName: String): Unit = {
+    val props :Properties= getOracleCtgirmProps()
+    val url :String= Constants.ORACLE_CTGIRM_URL
+    df.write.format("jdbc").mode(SaveMode.Append)
+      .option("batchsize", 1000)
+      .option("numPartitions",30)
       .jdbc(
         url,
         TableName,

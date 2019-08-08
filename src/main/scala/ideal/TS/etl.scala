@@ -1,6 +1,10 @@
 package ideal.TS
 
+import org.apache.hadoop.io.compress.CompressionCodec
 import org.apache.spark.sql.SparkSession
+import org.elasticsearch.spark._
+
+import scala.io.Codec
 
 /**
   * Created by zhangxiaofan on 2019/7/24.
@@ -13,7 +17,7 @@ object etl {
       .enableHiveSupport().
       config("spark.sql.warehouse.dir", "/user/hive/warehouse")
       .getOrCreate()
-    val fileRdd = spark.sparkContext.textFile("/data/detail_cdr_bur1_go_201811.csv",22)
+    val fileRdd = spark.sparkContext.textFile(args(0))
       .map(line => {
         val arr = line.split(",")
         val sb = new StringBuilder()
@@ -22,6 +26,6 @@ object etl {
         }
         sb.substring(0,sb.length-1).toString()
       })
-    fileRdd.saveAsTextFile("/data/trim")
+    fileRdd.coalesce(1).saveAsTextFile(args(1))
   }
 }

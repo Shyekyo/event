@@ -1,0 +1,65 @@
+Request
+GET importsmethods/typeimportsmethods/_search?search_type=count
+{
+  "size": 0,
+  "aggs": {
+    "group_by_imports": {
+      "terms": {
+        "field": "tokens.importName"
+      }
+    }
+  }
+}
+Request
+{
+   "took": 2064,
+   "timed_out": false,
+   "_shards": {
+      "total": 5,
+      "successful": 5,
+      "failed": 0
+   },
+   "hits": {
+      "total": 1297362,
+      "max_score": 0,
+      "hits": []
+   },
+   "aggregations": {
+      "group_by_imports": {
+         "doc_count_error_upper_bound": 4939,
+         "sum_other_doc_count": 1960640,
+         "buckets": [
+            {
+               "key": "java.util.list",
+               "doc_count": 129986
+            },
+            {
+               "key": "java.util.map",
+               "doc_count": 103525
+            }
+         ]
+      }
+   }
+}
+code
+val conf = new SparkConf().setMaster("local[2]").setAppName("test")
+
+conf.set("es.nodes", "localhost")
+conf.set("es.port", "9200")
+conf.set("es.index.auto.create","true")
+conf.set("es.resource","importsmethods/typeimportsmethods/_search")
+conf.set("es.query","""?search_type=count&ignore_unavailable=true {
+  "size": 0,
+     "aggs": {
+       "group_by_imports": {
+         "terms": {
+           "field": "tokens.importName"
+         }
+       }
+     }
+}""")
+sc = new SparkContext(conf)
+val importMethodsRDD = sc.esRDD();
+val rddVal = importMethodsRDD.map(x => x._2)
+
+rddVal.saveAsTextFile("../")

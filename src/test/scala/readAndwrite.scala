@@ -1,10 +1,11 @@
+import java.util.Date
+
 import ideal.constants.Constants
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder
 import org.elasticsearch.spark._
-import org.json4s.jackson.Json
-
 
 
 /**
@@ -26,10 +27,8 @@ object readAndwrite {
       .getOrCreate()
     val resource ="""cdrindex/_doc/"""
     var query = "{\"query\":{\"range\":{\"dir\":{\"gte\":1 ,\"lte\":" +3+ "}}}}"
-    query = "{\"query\":{\"match\":{\"dir\":1}}}"
-
     query = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"dir\":1}},\"filter\":{\"range\":{\"seconds\":{\"gte\":40}}}}}}"//{\"match\":{\"dir\":1}}}"
-   //{"query":"bool":{"must":[{"match":{"dir":1}}],"filter":[{"range":{"seconds":{"gte":40}}}]}}
+    //{"query":"bool":{"must":[{"match":{"dir":1}}],"filter":[{"range":{"seconds":{"gte":40}}}]}}
     //array = spark.sparkContext.esJsonRDD("cdrindex/_doc","?q=*")
     val array = spark.sparkContext.esJsonRDD(resource,query)
       .foreachPartition(_.foreach(println _))
@@ -57,5 +56,14 @@ object readAndwrite {
     val mk = spark.sparkContext.makeRDD(
       Seq(numbers, airports))
     mk
+  }
+
+  @throws[Exception]
+  private def getEShelper = {
+    val builder = jsonBuilder.startObject
+      .field("user", "kimchy")
+      .field("postDate", new Date)
+      .field("message", "trying out Elasticsearch").endObject
+    builder
   }
 }

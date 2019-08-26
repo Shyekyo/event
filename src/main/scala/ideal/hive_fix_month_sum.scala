@@ -37,9 +37,6 @@ object hive_fix_month_sum {
 
 
 
-
-
-
 //====================================
     var v_condition : String = null
     var v_first_date : String = null

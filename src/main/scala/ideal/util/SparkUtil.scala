@@ -28,6 +28,14 @@ object SparkUtil {
     props
   }
 
+  def getMysqlProps():Properties={
+    val props = new Properties()
+    props.put("user", Constants.MYSQL_USER)
+    props.put("password", Constants.MYSQL_PASSWORD)
+    props.put("driver", Constants.MySQL_JDBC_DRIVER)
+    props
+  }
+
   def getOracleCtgirmProps():Properties={
     val props = new Properties()
     props.put("user", Constants.ORACLE_CTGIRM_USER)
@@ -46,6 +54,19 @@ object SparkUtil {
       props = getOracleCtgirmProps()
       url = Constants.ORACLE_CTGIRM_URL
     }
+    df.write.format("jdbc").mode(SaveMode.Append)
+      .option("fetchsize", 1000)
+      .jdbc(
+        url,
+        TableName,
+        props
+      )
+    _logging.info(s"save table $TableName is ok !")
+  }
+
+  def writeDataIntoMysql(df: DataFrame, TableName: String): Unit = {
+     val props = getMysqlProps
+     val url = Constants.MYSQL_URL
     df.write.format("jdbc").mode(SaveMode.Append)
       .option("fetchsize", 1000)
       .jdbc(

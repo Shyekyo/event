@@ -1,6 +1,5 @@
 package ideal
 
-import ideal.Int_fix_month_sum.{p_acct_data_class, p_bureau_id, p_cycle_id}
 import ideal.constants.Constants
 import ideal.util.SparkUtil
 import org.apache.log4j.{Level, Logger}

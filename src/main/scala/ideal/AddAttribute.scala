@@ -1,7 +1,6 @@
 package ideal
 
 import breeze.linalg.sum
-import ideal.Int_fix_month_sum.getCreate_DaySumNobillBur_SQL
 import ideal.util.{DBUtil, SparkUtil}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SaveMode, SparkSession}
@@ -182,8 +181,8 @@ object AddAttribute {
   def createNobillTable(v_bureau_id:String,tail:String,p_cycle_id:Int): Unit ={
     val DaySumNobillBur = s"day_sum_nobill_bur${v_bureau_id}_${p_cycle_id}${tail}"
     if(!DBUtil.tableExists(DaySumNobillBur)){
-      val sql = getCreate_DaySumNobillBur_SQL(v_bureau_id,p_cycle_id)
-      DBUtil.createTable(sql,DaySumNobillBur,destation=205)
+      //val sql = getCreate_DaySumNobillBur_SQL(v_bureau_id,p_cycle_id)
+      //DBUtil.createTable(sql,DaySumNobillBur,destation=205)
     }else{
       DBUtil.clearTable(DaySumNobillBur,205)
     }

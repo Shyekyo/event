@@ -1,8 +1,6 @@
 package ideal.util
 
 import java.util.Properties
-
-import ideal.Rep_total_account_commit1.{_logging, getOracleProps}
 import ideal.constants.Constants
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
@@ -61,7 +59,7 @@ object SparkUtil {
         TableName,
         props
       )
-    _logging.info(s"save table $TableName is ok !")
+    //_logging.info(s"save table $TableName is ok !")
   }
 
   def writeDataIntoMysql(df: DataFrame, TableName: String): Unit = {
@@ -74,7 +72,7 @@ object SparkUtil {
         TableName,
         props
       )
-    _logging.info(s"save table $TableName is ok !")
+    //_logging.info(s"save table $TableName is ok !")
   }
 
   def writeDataIntoCTG(df: DataFrame, TableName: String): Unit = {
@@ -88,6 +86,6 @@ object SparkUtil {
         TableName,
         props
       )
-    _logging.info(s"save table $TableName is ok !")
+    //_logging.info(s"save table $TableName is ok !")
   }
 }

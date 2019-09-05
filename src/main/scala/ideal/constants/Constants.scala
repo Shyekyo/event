@@ -16,4 +16,9 @@ object Constants {
   //"jdbc:oracle:thin:@//ip:1521/dbinstance"
   val ORACLE_CTGIRM_USER: String= "ctgirm"
   val ORACLE_CTGIRM_PASSWORD : String= "Ctgtest_m_205"
+
+  val MYSQL_URL : String = "jdbc:mysql://192.9.100.105:3306/test"
+  val MySQL_JDBC_DRIVER = "com.mysql.jdbc.Driver"
+  val MYSQL_USER: String= "root"
+  val MYSQL_PASSWORD : String= "Bighead2019;"
 }

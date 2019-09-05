@@ -2,7 +2,7 @@ package ideal.util
 
 import java.sql.{Connection, DriverManager, ResultSet, Statement}
 
-import ideal.Int_fix_month_sum.p_cycle_id
+import .p_cycle_id
 import ideal.constants.Constants
 import ideal.util.DBUtil.{Close, init204}
 import ideal.util.SparkUtil.getOracleIvossProps

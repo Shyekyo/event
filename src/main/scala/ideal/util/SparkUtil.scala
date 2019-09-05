@@ -1,8 +1,6 @@
 package ideal.util
 
 import java.util.Properties
-
-import ideal.Rep_total_account_commit1.{_logging, getOracleProps}
 import ideal.constants.Constants
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
@@ -25,6 +23,14 @@ object SparkUtil {
     props.put("user", Constants.ORACLE_IVOSS_USER)
     props.put("password", Constants.ORACLE_IVOSS_PASSWORD)
     props.put("driver", Constants.ORACLE_JDBC_DRIVER)
+    props
+  }
+
+  def getMysqlProps():Properties={
+    val props = new Properties()
+    props.put("user", Constants.MYSQL_USER)
+    props.put("password", Constants.MYSQL_PASSWORD)
+    props.put("driver", Constants.MySQL_JDBC_DRIVER)
     props
   }
 
@@ -53,7 +59,20 @@ object SparkUtil {
         TableName,
         props
       )
-    _logging.info(s"save table $TableName is ok !")
+    //_logging.info(s"save table $TableName is ok !")
+  }
+
+  def writeDataIntoMysql(df: DataFrame, TableName: String): Unit = {
+     val props = getMysqlProps
+     val url = Constants.MYSQL_URL
+    df.write.format("jdbc").mode(SaveMode.Append)
+      .option("fetchsize", 1000)
+      .jdbc(
+        url,
+        TableName,
+        props
+      )
+    //_logging.info(s"save table $TableName is ok !")
   }
 
   def writeDataIntoCTG(df: DataFrame, TableName: String): Unit = {
@@ -67,6 +86,6 @@ object SparkUtil {
         TableName,
         props
       )
-    _logging.info(s"save table $TableName is ok !")
+    //_logging.info(s"save table $TableName is ok !")
   }
 }

@@ -54,21 +54,33 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-yarn_2.11</artifactId>
       <version>${spark.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <!-- Spark Core -->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.11</artifactId>
       <version>${spark.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-mllib_2.11</artifactId>
       <version>${spark.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <dependency>
       <groupId>org.apache.hbase</groupId>
@@ -92,7 +104,11 @@
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
       <version>${hadoop.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>
@@ -109,19 +125,31 @@
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-reflect</artifactId>
       <version>${scala.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.11</artifactId>
       <version>${spark.version}</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch-hadoop -->
     <dependency>
@@ -146,13 +174,21 @@
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>elasticsearch-rest-high-level-client</artifactId>
       <version>7.3.0</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>7.3.0</version>
+<<<<<<< HEAD
       <scope>${h2.scope}</scope>
+=======
+      <scope>provided</scope>
+>>>>>>> 7aca7d4a6039e5d3ca598f5f84c4e89e6c9c6fc1
     </dependency>
   </dependencies>
   <profiles>
